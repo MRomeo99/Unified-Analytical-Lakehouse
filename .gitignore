@@ -1,0 +1,49 @@
+# Environment
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+*.egg
+
+# dlt
+.dlt/
+data/
+
+# dbt
+transform/beacon/target/
+transform/beacon/dbt_packages/
+transform/beacon/logs/
+
+# DuckDB
+*.duckdb
+*.duckdb.wal
+
+# Dagster
+.dagster/
+
+# Great Expectations
+quality/uncommitted/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+.pytest_cache/
+htmlcov/
+.coverage
+
+# dbt docs (generated)
+transform/beacon/docs/

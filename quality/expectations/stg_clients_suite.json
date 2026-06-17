@@ -1,0 +1,44 @@
+{
+  "expectation_suite_name": "stg_clients_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "kwargs": {"min_value": 490, "max_value": 510},
+      "meta": {"notes": "Seeded with 500 clients; allow ±2% variance."}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {"column": "client_id"},
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": {"column": "client_id"},
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "industry",
+        "value_set": ["legal", "dental", "home_services", "med_spa", "auto"]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "plan_tier",
+        "value_set": ["starter", "pro", "enterprise"]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {"column": "onboard_date"},
+      "meta": {}
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "0.18.x"
+  }
+}

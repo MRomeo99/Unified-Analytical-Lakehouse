@@ -1,0 +1,17 @@
+beacon:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', '../../data/beacon.duckdb') }}"
+      schema: main
+      threads: 4
+      extensions:
+        - httpfs
+        - delta
+      settings:
+        s3_endpoint: "{{ env_var('AWS_ENDPOINT_URL', 'http://localhost:9000') | replace('http://', '') | replace('https://', '') }}"
+        s3_access_key_id: "{{ env_var('AWS_ACCESS_KEY_ID', 'minioadmin') }}"
+        s3_secret_access_key: "{{ env_var('AWS_SECRET_ACCESS_KEY', 'minioadmin123') }}"
+        s3_use_ssl: false
+        s3_url_style: path

@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: beacon_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-beacon}
+      POSTGRES_USER: ${POSTGRES_USER:-beacon}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-beacon_secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-beacon}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: beacon_minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin123}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio_init:
+    image: minio/mc:latest
+    container_name: beacon_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 ${MINIO_ACCESS_KEY:-minioadmin} ${MINIO_SECRET_KEY:-minioadmin123};
+      mc mb --ignore-existing local/${MINIO_BUCKET:-beacon-bronze};
+      exit 0;
+      "
+
+  dagster_webserver:
+    image: dagster/dagster-k8s:latest
+    container_name: beacon_dagster_webserver
+    command: dagster-webserver -h 0.0.0.0 -p 3000
+    environment:
+      DAGSTER_HOME: /opt/dagster/dagster_home
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./orchestration:/opt/dagster/app
+      - dagster_home:/opt/dagster/dagster_home
+    depends_on:
+      - postgres
+
+  dagster_daemon:
+    image: dagster/dagster-k8s:latest
+    container_name: beacon_dagster_daemon
+    command: dagster-daemon run
+    environment:
+      DAGSTER_HOME: /opt/dagster/dagster_home
+    volumes:
+      - ./orchestration:/opt/dagster/app
+      - dagster_home:/opt/dagster/dagster_home
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  minio_data:
+  dagster_home:
