@@ -16,7 +16,14 @@ DBT_PROJECT_DIR = Path(__file__).parent.parent / "transform" / "beacon"
 def _run_dbt(*args: str) -> subprocess.CompletedProcess:
     """Run a dbt command in the project directory."""
     return subprocess.run(
-        ["dbt", *args, "--project-dir", str(DBT_PROJECT_DIR)],
+        [
+            "dbt",
+            *args,
+            "--project-dir",
+            str(DBT_PROJECT_DIR),
+            "--profiles-dir",
+            str(DBT_PROJECT_DIR),
+        ],
         capture_output=True,
         text=True,
     )

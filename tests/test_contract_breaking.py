@@ -57,7 +57,16 @@ def test_contract_violation_causes_dbt_failure(tmp_path):
     try:
         mart_path.write_text(broken_sql)
         result = subprocess.run(
-            ["dbt", "run", "--select", "dim_clients", "--project-dir", str(DBT_PROJECT_DIR)],
+            [
+                "dbt",
+                "run",
+                "--select",
+                "dim_clients",
+                "--project-dir",
+                str(DBT_PROJECT_DIR),
+                "--profiles-dir",
+                str(DBT_PROJECT_DIR),
+            ],
             capture_output=True,
             text=True,
         )
@@ -82,7 +91,16 @@ def test_correct_model_passes_contract():
     (Run after test_contract_violation_causes_dbt_failure to confirm restore.)
     """
     result = subprocess.run(
-        ["dbt", "run", "--select", "dim_clients", "--project-dir", str(DBT_PROJECT_DIR)],
+        [
+            "dbt",
+            "run",
+            "--select",
+            "dim_clients",
+            "--project-dir",
+            str(DBT_PROJECT_DIR),
+            "--profiles-dir",
+            str(DBT_PROJECT_DIR),
+        ],
         capture_output=True,
         text=True,
     )
