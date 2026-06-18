@@ -20,7 +20,9 @@ from seeds.generate_seo_api import generate_seo_rankings
 CLIENT_IDS = list(range(1, 501))
 
 
-def _load(conn: duckdb.DuckDBPyConnection, table: str, records: list, extra: dict | None = None) -> None:
+def _load(
+    conn: duckdb.DuckDBPyConnection, table: str, records: list, extra: dict | None = None
+) -> None:
     """Create or replace a bronze table from a list of dicts."""
     df = pd.DataFrame(records)
     if extra:
