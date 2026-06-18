@@ -2,7 +2,7 @@
 Dagster schedule definitions — daily pipeline run at 02:00 UTC.
 """
 
-from dagster import DefaultScheduleStatus, ScheduleDefinition
+from dagster import DefaultScheduleStatus, ScheduleDefinition  # noqa: I001
 
 
 daily_pipeline_schedule = ScheduleDefinition(
