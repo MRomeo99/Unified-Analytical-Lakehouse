@@ -2,15 +2,17 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY pyproject.toml .
-RUN pip install --no-cache-dir -e ".[dev]"
+# Install only serving-layer dependencies — not the full pipeline stack
+RUN pip install --no-cache-dir \
+    "fastapi>=0.111" \
+    "uvicorn[standard]>=0.29" \
+    "duckdb>=0.10" \
+    "python-dotenv>=1.0"
 
-COPY . .
+COPY serving/ serving/
 
 ENV DUCKDB_PATH=/app/data/beacon.duckdb
-ENV DLT_DATA_DIR=/app/data/dlt
-ENV SERVING_HOST=0.0.0.0
-ENV SERVING_PORT=8000
+ENV PYTHONPATH=/app
 
 EXPOSE 8000
 

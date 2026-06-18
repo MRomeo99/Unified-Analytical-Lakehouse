@@ -45,6 +45,13 @@ jobs:
       - name: Install dependencies
         run: pip install dbt-duckdb
 
+      - name: Create empty DuckDB for compile
+        run: |
+          mkdir -p data
+          python -c "import duckdb; duckdb.connect('$DUCKDB_PATH').close()"
+        env:
+          DUCKDB_PATH: ${{ env.DUCKDB_PATH }}
+
       - name: dbt deps
         run: dbt deps --project-dir transform/beacon --profiles-dir transform/beacon
 
