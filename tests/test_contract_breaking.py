@@ -12,7 +12,6 @@ This test is marked as integration because it requires a running DuckDB + dbt.
 """
 
 import subprocess
-import tempfile
 import textwrap
 from pathlib import Path
 

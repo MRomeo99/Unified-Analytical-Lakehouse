@@ -37,5 +37,4 @@ def _seo_rankings_resource(fixture_path: str) -> Iterator[dict]:
         )
     with open(path) as f:
         rankings = json.load(f)
-    for row in rankings:
-        yield row
+    yield from rankings
