@@ -1,0 +1,130 @@
+version: 2
+
+sources:
+  - name: bronze_clients
+    description: "Raw client data ingested from Postgres via dlt."
+    database: "{{ env_var('DUCKDB_PATH', '../../data/beacon.duckdb') }}"
+    schema: bronze
+    loaded_at_field: _loaded_at
+    freshness:
+      warn_after: {count: 25, period: hour}
+      error_after: {count: 48, period: hour}
+    tables:
+      - name: raw_clients
+        description: "One row per client, append-only from operational Postgres."
+        columns:
+          - name: id
+            description: "Primary key."
+            tests:
+              - not_null
+              - unique
+          - name: name
+            description: "Business name."
+            tests: [not_null]
+          - name: industry
+            description: "Client industry vertical."
+            tests:
+              - not_null
+              - accepted_values:
+                  values: [legal, dental, home_services, med_spa, auto]
+          - name: plan_tier
+            description: "Subscription tier."
+            tests:
+              - not_null
+              - accepted_values:
+                  values: [starter, pro, enterprise]
+          - name: onboard_date
+            description: "Date client joined the platform."
+            tests: [not_null]
+
+  - name: bronze_leads
+    description: "Raw lead data from Postgres."
+    database: "{{ env_var('DUCKDB_PATH', '../../data/beacon.duckdb') }}"
+    schema: bronze
+    loaded_at_field: _loaded_at
+    freshness:
+      warn_after: {count: 25, period: hour}
+      error_after: {count: 48, period: hour}
+    tables:
+      - name: raw_leads
+        description: "One row per inbound lead inquiry."
+        columns:
+          - name: id
+            tests: [not_null, unique]
+          - name: client_id
+            tests: [not_null]
+          - name: source
+            tests:
+              - accepted_values:
+                  values: [organic, paid, referral, social]
+          - name: status
+            tests:
+              - accepted_values:
+                  values: [new, contacted, qualified, converted, lost]
+          - name: created_at
+            tests: [not_null]
+
+  - name: bronze_appointments
+    description: "Raw appointments from Postgres."
+    database: "{{ env_var('DUCKDB_PATH', '../../data/beacon.duckdb') }}"
+    schema: bronze
+    loaded_at_field: _loaded_at
+    freshness:
+      warn_after: {count: 25, period: hour}
+      error_after: {count: 48, period: hour}
+    tables:
+      - name: raw_appointments
+        description: "One appointment per converted lead."
+        columns:
+          - name: id
+            tests: [not_null, unique]
+          - name: lead_id
+            tests: [not_null]
+          - name: client_id
+            tests: [not_null]
+          - name: scheduled_at
+            tests: [not_null]
+
+  - name: bronze_seo
+    description: "Raw SEO ranking snapshots from JSON fixture (simulates REST API)."
+    database: "{{ env_var('DUCKDB_PATH', '../../data/beacon.duckdb') }}"
+    schema: bronze
+    loaded_at_field: _dlt_load_time
+    freshness:
+      warn_after: {count: 8, period: day}
+      error_after: {count: 14, period: day}
+    tables:
+      - name: raw_seo_rankings
+        description: "Weekly keyword position per client."
+        columns:
+          - name: client_id
+            tests: [not_null]
+          - name: keyword
+            tests: [not_null]
+          - name: position
+            tests: [not_null]
+          - name: snapshot_date
+            tests: [not_null]
+
+  - name: bronze_ad_spend
+    description: "Raw daily ad spend from CSV exports."
+    database: "{{ env_var('DUCKDB_PATH', '../../data/beacon.duckdb') }}"
+    schema: bronze
+    loaded_at_field: _dlt_load_time
+    freshness:
+      warn_after: {count: 25, period: hour}
+      error_after: {count: 48, period: hour}
+    tables:
+      - name: raw_ad_spend
+        description: "Daily spend per client per channel."
+        columns:
+          - name: client_id
+            tests: [not_null]
+          - name: channel
+            tests:
+              - accepted_values:
+                  values: [google, meta, email]
+          - name: date
+            tests: [not_null]
+          - name: spend
+            tests: [not_null]

@@ -1,0 +1,277 @@
+version: 2
+
+models:
+  - name: dim_clients
+    description: "Gold dimension table — one row per client with lifetime metrics."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: client_key
+        description: "Surrogate key (SHA-256 of client_id)."
+        data_type: varchar
+        constraints:
+          - type: not_null
+        tests: [not_null, unique]
+      - name: client_id
+        description: "Source system integer primary key."
+        data_type: integer
+        constraints:
+          - type: not_null
+        tests: [not_null, unique]
+      - name: client_name
+        description: "Business name."
+        data_type: varchar
+        constraints:
+          - type: not_null
+        tests: [not_null]
+      - name: industry
+        description: "Industry vertical."
+        data_type: varchar
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+          - accepted_values:
+              values: [legal, dental, home_services, med_spa, auto]
+      - name: plan_tier
+        description: "Subscription plan."
+        data_type: varchar
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+          - accepted_values:
+              values: [starter, pro, enterprise]
+      - name: onboard_date
+        description: "Date client joined the platform."
+        data_type: date
+        constraints:
+          - type: not_null
+        tests: [not_null]
+      - name: city
+        description: "Client city."
+        data_type: varchar
+      - name: state
+        description: "Client state abbreviation."
+        data_type: varchar
+      - name: days_active
+        description: "Days since onboarding to today."
+        data_type: integer
+      - name: total_leads
+        description: "Lifetime lead count."
+        data_type: integer
+      - name: converted_leads
+        description: "Leads with status=converted."
+        data_type: integer
+      - name: total_appointments
+        description: "Lifetime appointment count."
+        data_type: integer
+      - name: lead_conversion_rate
+        description: "converted_leads / total_leads, null if no leads."
+        data_type: decimal
+      - name: _loaded_at
+        description: "When record was last loaded from Bronze."
+        data_type: timestamp
+
+  - name: fct_leads
+    description: "Gold fact table — one row per lead with conversion flags."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: lead_key
+        description: "Surrogate key."
+        data_type: varchar
+        constraints:
+          - type: not_null
+        tests: [not_null, unique]
+      - name: lead_id
+        description: "Source integer PK."
+        data_type: integer
+        constraints:
+          - type: not_null
+        tests: [not_null, unique]
+      - name: client_id
+        description: "FK to dim_clients."
+        data_type: integer
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_clients')
+              field: client_id
+      - name: industry
+        description: "Client industry (denormalized)."
+        data_type: varchar
+      - name: plan_tier
+        description: "Client plan tier (denormalized)."
+        data_type: varchar
+      - name: lead_source
+        description: "Acquisition channel."
+        data_type: varchar
+        tests:
+          - accepted_values:
+              values: [organic, paid, referral, social]
+      - name: lead_status
+        description: "Current lead lifecycle status."
+        data_type: varchar
+        tests:
+          - accepted_values:
+              values: [new, contacted, qualified, converted, lost]
+      - name: lead_value
+        description: "Estimated value of the lead in USD."
+        data_type: decimal
+      - name: created_at
+        description: "Timestamp of lead creation."
+        data_type: timestamp
+        constraints:
+          - type: not_null
+        tests: [not_null]
+      - name: is_converted
+        description: "True if lead_status = converted."
+        data_type: boolean
+        constraints:
+          - type: not_null
+        tests: [not_null]
+      - name: has_appointment
+        description: "True if lead resulted in a booked appointment."
+        data_type: boolean
+      - name: age_days
+        description: "Days since lead was created."
+        data_type: integer
+      - name: _loaded_at
+        description: "Bronze load timestamp."
+        data_type: timestamp
+
+  - name: fct_ad_performance
+    description: "Gold fact table — daily ad performance per client per channel."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: ad_spend_key
+        description: "Surrogate key."
+        data_type: varchar
+        constraints:
+          - type: not_null
+        tests: [not_null, unique]
+      - name: client_id
+        description: "FK to dim_clients."
+        data_type: integer
+        constraints:
+          - type: not_null
+        tests: [not_null]
+      - name: industry
+        description: "Client industry (denormalized)."
+        data_type: varchar
+      - name: plan_tier
+        description: "Client plan tier (denormalized)."
+        data_type: varchar
+      - name: channel
+        description: "Advertising channel."
+        data_type: varchar
+        tests:
+          - accepted_values:
+              values: [google, meta, email]
+      - name: spend_date
+        description: "Calendar date of the spend."
+        data_type: date
+        constraints:
+          - type: not_null
+        tests: [not_null]
+      - name: spend
+        description: "Total spend in USD for the day."
+        data_type: decimal
+        constraints:
+          - type: not_null
+        tests: [not_null]
+      - name: impressions
+        description: "Ad impressions delivered."
+        data_type: integer
+      - name: clicks
+        description: "Clicks on ads."
+        data_type: integer
+      - name: ctr
+        description: "Click-through rate (clicks / impressions)."
+        data_type: decimal
+      - name: cpc
+        description: "Cost per click (spend / clicks), null if no clicks."
+        data_type: decimal
+      - name: daily_leads
+        description: "Leads acquired on the same date."
+        data_type: integer
+      - name: cpl
+        description: "Cost per lead (spend / leads), null if no leads that day."
+        data_type: decimal
+      - name: _loaded_at
+        description: "Bronze load timestamp."
+        data_type: timestamp
+
+  - name: fct_appointments
+    description: "Gold fact table — one appointment per row with funnel context."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: appointment_key
+        description: "Surrogate key."
+        data_type: varchar
+        constraints:
+          - type: not_null
+        tests: [not_null, unique]
+      - name: appointment_id
+        description: "Source integer PK."
+        data_type: integer
+        constraints:
+          - type: not_null
+        tests: [not_null, unique]
+      - name: client_id
+        description: "FK to dim_clients."
+        data_type: integer
+        constraints:
+          - type: not_null
+        tests: [not_null]
+      - name: industry
+        description: "Client industry (denormalized)."
+        data_type: varchar
+      - name: plan_tier
+        description: "Client plan tier (denormalized)."
+        data_type: varchar
+      - name: lead_id
+        description: "Lead that generated this appointment."
+        data_type: integer
+        constraints:
+          - type: not_null
+        tests: [not_null]
+      - name: lead_source
+        description: "Acquisition channel of the originating lead."
+        data_type: varchar
+      - name: lead_value
+        description: "Value of the originating lead."
+        data_type: decimal
+      - name: appointment_status
+        description: "Appointment lifecycle status."
+        data_type: varchar
+        tests:
+          - accepted_values:
+              values: [scheduled, completed, cancelled]
+      - name: scheduled_at
+        description: "Appointment datetime."
+        data_type: timestamp
+        constraints:
+          - type: not_null
+        tests: [not_null]
+      - name: lead_created_at
+        description: "When the originating lead was created."
+        data_type: timestamp
+      - name: days_to_appointment
+        description: "Days from lead creation to appointment booking."
+        data_type: integer
+      - name: is_completed
+        description: "True if appointment_status = completed."
+        data_type: boolean
+      - name: _loaded_at
+        description: "Bronze load timestamp."
+        data_type: timestamp
