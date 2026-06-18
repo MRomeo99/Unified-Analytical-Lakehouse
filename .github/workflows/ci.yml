@@ -43,7 +43,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        run: pip install dbt-duckdb dbt-utils
+        run: pip install dbt-duckdb
 
       - name: dbt deps
         run: dbt deps --project-dir transform/beacon
