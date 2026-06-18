@@ -110,7 +110,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        run: pip install "great-expectations>=0.18,<1.0" duckdb-engine duckdb
+        run: pip install "great-expectations>=0.18,<1.0" duckdb pandas
 
       - name: Download DuckDB from dbt-test
         uses: actions/download-artifact@v4
@@ -118,17 +118,8 @@ jobs:
           name: beacon-duckdb
           path: data/
 
-      - name: Run GX checkpoint
-        run: |
-          python -c "
-          import great_expectations as gx
-          ctx = gx.get_context(context_root_dir='quality')
-          result = ctx.run_checkpoint(checkpoint_name='beacon_checkpoint')
-          if not result.success:
-              print('DATA QUALITY GATE FAILED')
-              exit(1)
-          print('Data quality gate passed.')
-          "
+      - name: Run data quality checks
+        run: python quality/run_checks.py
         env:
           DUCKDB_PATH: ${{ env.DUCKDB_PATH }}
 
@@ -144,12 +135,21 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        run: pip install -e ".[dev]"
+        run: pip install -e ".[dev]" dbt-duckdb
 
-      - name: Run unit + integration tests
+      - name: Run unit tests
         run: pytest tests/ -v -m "not integration"
 
-      - name: Run integration tests (dbt required)
+      - name: Download DuckDB from dbt-test
+        uses: actions/download-artifact@v4
+        with:
+          name: beacon-duckdb
+          path: data/
+
+      - name: dbt deps (required by integration tests)
+        run: dbt deps --project-dir transform/beacon --profiles-dir transform/beacon
+
+      - name: Run integration tests
         run: pytest tests/ -v -m integration
         env:
           DUCKDB_PATH: ${{ env.DUCKDB_PATH }}

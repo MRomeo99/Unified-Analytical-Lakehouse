@@ -1,17 +1,21 @@
 config_version: 3.0
 
+# Datasources are added programmatically in quality/run_checks.py
+# using PandasExecutionEngine fed by duckdb's native Python API.
+# This avoids duckdb-engine / SQLAlchemy version incompatibilities.
 datasources:
-  beacon_duckdb:
+  beacon_pandas:
     class_name: Datasource
     module_name: great_expectations.datasource
     execution_engine:
-      class_name: SqlAlchemyExecutionEngine
-      connection_string: "duckdb:///${DUCKDB_PATH}"
+      class_name: PandasExecutionEngine
+      module_name: great_expectations.execution_engine
     data_connectors:
-      default_inferred_data_connector_name:
-        class_name: InferredAssetSqlDataConnector
-        include_schema_name: false
-        schema_filter_fn: "lambda schema: schema in ['main_silver', 'silver']"
+      runtime:
+        class_name: RuntimeDataConnector
+        module_name: great_expectations.datasource.data_connector
+        batch_identifiers:
+          - table_name
 
 stores:
   expectations_store:
@@ -28,7 +32,6 @@ stores:
 
   evaluation_parameter_store:
     class_name: EvaluationParameterStore
-
   checkpoint_store:
     class_name: CheckpointStore
     store_backend:
@@ -52,4 +55,12 @@ data_docs_sites:
       class_name: DefaultSiteIndexBuilder
 
 anonymous_usage_statistics:
+  data_context_id: 8db93910-8d74-432b-93d8-899f9e84bcb7
   enabled: false
+plugins_directory:
+notebooks:
+config_variables_file_path:
+include_rendered_content:
+  globally: false
+  expectation_suite: false
+  expectation_validation_result: false
