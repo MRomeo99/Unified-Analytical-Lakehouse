@@ -5,8 +5,8 @@ Exposes AI-agent-ready context endpoints backed by DuckDB Gold tables.
 OpenAPI docs auto-generated at /docs.
 """
 
-from fastapi import FastAPI
 from dotenv import load_dotenv
+from fastapi import FastAPI
 
 load_dotenv()
 

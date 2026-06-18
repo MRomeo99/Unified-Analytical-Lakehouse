@@ -5,13 +5,11 @@ Dagster AssetChecks for row-count and schema validation on Gold marts.
 import os
 
 import duckdb
-
-from dagster import AssetCheckResult, AssetCheckSpec, asset_check
+from dagster import AssetCheckResult, asset_check
 
 from orchestration.beacon_orchestration.assets.gold_assets import (
     dim_clients,
     fct_ad_performance,
-    fct_appointments,
     fct_leads,
 )
 
