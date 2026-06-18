@@ -3,7 +3,6 @@ version: 2
 sources:
   - name: bronze_clients
     description: "Raw client data ingested from Postgres via dlt."
-    database: "{{ env_var('DUCKDB_PATH', '../../data/beacon.duckdb') }}"
     schema: bronze
     loaded_at_field: _loaded_at
     freshness:
@@ -39,7 +38,6 @@ sources:
 
   - name: bronze_leads
     description: "Raw lead data from Postgres."
-    database: "{{ env_var('DUCKDB_PATH', '../../data/beacon.duckdb') }}"
     schema: bronze
     loaded_at_field: _loaded_at
     freshness:
@@ -66,7 +64,6 @@ sources:
 
   - name: bronze_appointments
     description: "Raw appointments from Postgres."
-    database: "{{ env_var('DUCKDB_PATH', '../../data/beacon.duckdb') }}"
     schema: bronze
     loaded_at_field: _loaded_at
     freshness:
@@ -87,7 +84,6 @@ sources:
 
   - name: bronze_seo
     description: "Raw SEO ranking snapshots from JSON fixture (simulates REST API)."
-    database: "{{ env_var('DUCKDB_PATH', '../../data/beacon.duckdb') }}"
     schema: bronze
     loaded_at_field: _dlt_load_time
     freshness:
@@ -108,7 +104,6 @@ sources:
 
   - name: bronze_ad_spend
     description: "Raw daily ad spend from CSV exports."
-    database: "{{ env_var('DUCKDB_PATH', '../../data/beacon.duckdb') }}"
     schema: bronze
     loaded_at_field: _dlt_load_time
     freshness:

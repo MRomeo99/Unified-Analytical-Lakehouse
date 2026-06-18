@@ -74,12 +74,10 @@ jobs:
       - name: Install dependencies
         run: pip install -e ".[dev]" dbt-duckdb
 
-      - name: Generate seed data
-        run: |
-          mkdir -p data/dlt/seo_fixtures data/dlt/ad_spend
-          python seeds/generate_postgres.py || true  # Postgres not running in CI; generates JSON/CSV only
-          python seeds/generate_seo_api.py
-          python seeds/generate_ad_spend.py
+      - name: Populate DuckDB bronze tables
+        run: python seeds/load_bronze_duckdb.py
+        env:
+          DUCKDB_PATH: ${{ env.DUCKDB_PATH }}
 
       - name: dbt deps
         run: dbt deps --project-dir transform/beacon --profiles-dir transform/beacon
