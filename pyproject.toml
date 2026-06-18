@@ -27,8 +27,8 @@ dependencies = [
     "dagster>=1.7",
     "dagster-webserver>=1.7",
     "dagster-dbt>=0.23",
-    # Data quality
-    "great-expectations>=0.18",
+    # Data quality (GX 1.x changed the API; pin to the V3 config era)
+    "great-expectations>=0.18,<1.0",
     # Serving
     "fastapi>=0.111",
     "uvicorn[standard]>=0.29",
@@ -75,3 +75,6 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+markers = [
+    "integration: tests that require a running database and dbt (deselect with '-m not integration')",
+]

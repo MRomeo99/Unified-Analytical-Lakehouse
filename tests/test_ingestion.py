@@ -162,12 +162,15 @@ class TestGenerateAdSpend:
         assert channels == {"google", "meta", "email"}
 
     def test_spend_is_within_expected_range(self):
-        """Daily spend per channel must be $10–$500."""
-        from seeds.generate_ad_spend import generate_ad_spend
+        """Daily spend is within channel bounds, weekend-factor adjusted."""
+        from seeds.generate_ad_spend import CHANNEL_SPEND, WEEKEND_FACTOR, generate_ad_spend
 
         rows = generate_ad_spend(client_ids=[1])
+        # Weekend factor (0.6) can push weekend spend below the weekday floor
+        min_spend = min(lo for lo, hi in CHANNEL_SPEND.values()) * WEEKEND_FACTOR
+        max_spend = max(hi for lo, hi in CHANNEL_SPEND.values())
         for row in rows:
-            assert 10.0 <= row["spend"] <= 500.0
+            assert min_spend <= row["spend"] <= max_spend
 
 
 # ---------------------------------------------------------------------------

@@ -6,11 +6,11 @@ datasources:
     module_name: great_expectations.datasource
     execution_engine:
       class_name: SqlAlchemyExecutionEngine
-      connection_string: "duckdb:///{{ env_var('DUCKDB_PATH', './data/beacon.duckdb') }}"
+      connection_string: "duckdb:///${DUCKDB_PATH}"
     data_connectors:
       default_inferred_data_connector_name:
         class_name: InferredAssetSqlDataConnector
-        include_schema_name: true
+        include_schema_name: false
         schema_filter_fn: "lambda schema: schema in ['main_silver', 'silver']"
 
 stores:

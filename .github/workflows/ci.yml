@@ -92,6 +92,12 @@ jobs:
         env:
           DUCKDB_PATH: ${{ env.DUCKDB_PATH }}
 
+      - name: Upload DuckDB for downstream jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: beacon-duckdb
+          path: ${{ env.DUCKDB_PATH }}
+
   great-expectations:
     name: Data Quality Gate
     runs-on: ubuntu-latest
@@ -104,7 +110,13 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        run: pip install great-expectations dbt-duckdb duckdb
+        run: pip install "great-expectations>=0.18,<1.0" duckdb-engine duckdb
+
+      - name: Download DuckDB from dbt-test
+        uses: actions/download-artifact@v4
+        with:
+          name: beacon-duckdb
+          path: data/
 
       - name: Run GX checkpoint
         run: |
