@@ -15,9 +15,7 @@ try:
     from airflow import DAG
     from airflow.operators.bash import BashOperator
 except ImportError:
-    raise ImportError(
-        "Install apache-airflow to use this DAG: pip install apache-airflow"
-    )
+    raise ImportError("Install apache-airflow to use this DAG: pip install apache-airflow")
 
 default_args = {
     "owner": "beacon",
@@ -62,11 +60,11 @@ with DAG(
     gx_checkpoint = BashOperator(
         task_id="great_expectations_checkpoint",
         bash_command=(
-            "python -c \""
+            'python -c "'
             "import great_expectations as gx; "
             "ctx = gx.get_context(context_root_dir='quality'); "
             "r = ctx.run_checkpoint(checkpoint_name='beacon_checkpoint'); "
-            "exit(0 if r.success else 1)\""
+            'exit(0 if r.success else 1)"'
         ),
     )
 

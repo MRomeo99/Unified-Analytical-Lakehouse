@@ -19,7 +19,9 @@ def _duck_conn() -> duckdb.DuckDBPyConnection:
     return duckdb.connect(os.environ.get("DUCKDB_PATH", "./data/beacon.duckdb"), read_only=True)
 
 
-@asset_check(asset=dim_clients, description="dim_clients must have 500 rows (one per seeded client).")
+@asset_check(
+    asset=dim_clients, description="dim_clients must have 500 rows (one per seeded client)."
+)
 def dim_clients_row_count() -> AssetCheckResult:
     """Verify dim_clients row count is within expected range."""
     with _duck_conn() as conn:
@@ -64,8 +66,15 @@ def fct_ad_performance_row_count() -> AssetCheckResult:
 def dim_clients_schema() -> AssetCheckResult:
     """Verify required columns exist in dim_clients."""
     required = {
-        "client_key", "client_id", "client_name", "industry", "plan_tier",
-        "onboard_date", "days_active", "total_leads", "lead_conversion_rate",
+        "client_key",
+        "client_id",
+        "client_name",
+        "industry",
+        "plan_tier",
+        "onboard_date",
+        "days_active",
+        "total_leads",
+        "lead_conversion_rate",
     }
     with _duck_conn() as conn:
         cols = {

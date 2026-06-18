@@ -30,9 +30,7 @@ def _ad_spend_resource(csv_path: str) -> Iterator[dict]:
     """Yield ad spend rows from CSV, casting numeric columns."""
     path = Path(csv_path)
     if not path.exists():
-        raise FileNotFoundError(
-            f"Ad spend CSV not found at {csv_path}. Run 'make seed' first."
-        )
+        raise FileNotFoundError(f"Ad spend CSV not found at {csv_path}. Run 'make seed' first.")
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         for row in reader:

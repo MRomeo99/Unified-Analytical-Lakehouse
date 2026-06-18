@@ -74,7 +74,9 @@ def stg_appointments(context: AssetExecutionContext) -> None:
 @asset(
     group_name="silver",
     description="Typed SEO ranking snapshots (Silver).",
-    freshness_policy=FreshnessPolicy(maximum_lag_minutes=14 * 24 * 60),  # 14-day SLA for weekly data
+    freshness_policy=FreshnessPolicy(
+        maximum_lag_minutes=14 * 24 * 60
+    ),  # 14-day SLA for weekly data
     compute_kind="dbt",
     deps=[raw_seo_rankings],
 )

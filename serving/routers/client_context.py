@@ -42,8 +42,15 @@ def fetch_client_context(client_id: int) -> dict[str, Any] | None:
             return None
 
         cols = [
-            "client_id", "client_name", "industry", "plan_tier", "days_active",
-            "total_leads", "converted_leads", "lead_conversion_rate", "total_appointments",
+            "client_id",
+            "client_name",
+            "industry",
+            "plan_tier",
+            "days_active",
+            "total_leads",
+            "converted_leads",
+            "lead_conversion_rate",
+            "total_appointments",
         ]
         result = dict(zip(cols, client_row))
 
@@ -76,9 +83,7 @@ def fetch_client_context(client_id: int) -> dict[str, Any] | None:
             result["monthly_spend_usd"] = float(spend_row[0])
             result["avg_cpl"] = float(spend_row[1]) if spend_row[1] is not None else None
 
-        result["last_updated"] = (
-            conn.execute("SELECT current_timestamp").fetchone()[0].isoformat()
-        )
+        result["last_updated"] = conn.execute("SELECT current_timestamp").fetchone()[0].isoformat()
 
     return result
 

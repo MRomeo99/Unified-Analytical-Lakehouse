@@ -68,9 +68,9 @@ def test_contract_violation_causes_dbt_failure(tmp_path):
         )
         # Confirm the failure is contract-related
         combined = result.stdout + result.stderr
-        assert "contract" in combined.lower() or "column" in combined.lower(), (
-            f"Expected contract/column error in dbt output:\n{combined}"
-        )
+        assert (
+            "contract" in combined.lower() or "column" in combined.lower()
+        ), f"Expected contract/column error in dbt output:\n{combined}"
     finally:
         mart_path.write_text(original)
 
@@ -86,6 +86,6 @@ def test_correct_model_passes_contract():
         capture_output=True,
         text=True,
     )
-    assert result.returncode == 0, (
-        f"Expected clean dim_clients to pass contract but got:\n{result.stderr}"
-    )
+    assert (
+        result.returncode == 0
+    ), f"Expected clean dim_clients to pass contract but got:\n{result.stderr}"

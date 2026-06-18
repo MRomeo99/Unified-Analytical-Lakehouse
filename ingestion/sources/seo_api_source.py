@@ -32,9 +32,7 @@ def _seo_rankings_resource(fixture_path: str) -> Iterator[dict]:
     """Yield all SEO ranking rows from the JSON fixture."""
     path = Path(fixture_path)
     if not path.exists():
-        raise FileNotFoundError(
-            f"SEO fixture not found at {fixture_path}. Run 'make seed' first."
-        )
+        raise FileNotFoundError(f"SEO fixture not found at {fixture_path}. Run 'make seed' first.")
     with open(path) as f:
         rankings = json.load(f)
     yield from rankings
