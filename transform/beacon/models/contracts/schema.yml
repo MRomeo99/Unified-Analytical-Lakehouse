@@ -57,19 +57,19 @@ models:
         data_type: varchar
       - name: days_active
         description: "Days since onboarding to today."
-        data_type: integer
+        data_type: bigint
       - name: total_leads
         description: "Lifetime lead count."
-        data_type: integer
+        data_type: bigint
       - name: converted_leads
         description: "Leads with status=converted."
-        data_type: integer
+        data_type: bigint
       - name: total_appointments
         description: "Lifetime appointment count."
-        data_type: integer
+        data_type: bigint
       - name: lead_conversion_rate
         description: "converted_leads / total_leads, null if no leads."
-        data_type: decimal
+        data_type: double
       - name: _loaded_at
         description: "When record was last loaded from Bronze."
         data_type: timestamp
@@ -122,7 +122,7 @@ models:
               values: [new, contacted, qualified, converted, lost]
       - name: lead_value
         description: "Estimated value of the lead in USD."
-        data_type: decimal
+        data_type: decimal(10,2)
       - name: created_at
         description: "Timestamp of lead creation."
         data_type: timestamp
@@ -140,7 +140,7 @@ models:
         data_type: boolean
       - name: age_days
         description: "Days since lead was created."
-        data_type: integer
+        data_type: bigint
       - name: _loaded_at
         description: "Bronze load timestamp."
         data_type: timestamp
@@ -183,7 +183,7 @@ models:
         tests: [not_null]
       - name: spend
         description: "Total spend in USD for the day."
-        data_type: decimal
+        data_type: decimal(10,2)
         constraints:
           - type: not_null
         tests: [not_null]
@@ -195,16 +195,16 @@ models:
         data_type: integer
       - name: ctr
         description: "Click-through rate (clicks / impressions)."
-        data_type: decimal
+        data_type: double
       - name: cpc
         description: "Cost per click (spend / clicks), null if no clicks."
-        data_type: decimal
+        data_type: double
       - name: daily_leads
         description: "Leads acquired on the same date."
-        data_type: integer
+        data_type: bigint
       - name: cpl
         description: "Cost per lead (spend / leads), null if no leads that day."
-        data_type: decimal
+        data_type: double
       - name: _loaded_at
         description: "Bronze load timestamp."
         data_type: timestamp
@@ -250,7 +250,7 @@ models:
         data_type: varchar
       - name: lead_value
         description: "Value of the originating lead."
-        data_type: decimal
+        data_type: decimal(10,2)
       - name: appointment_status
         description: "Appointment lifecycle status."
         data_type: varchar
@@ -268,7 +268,7 @@ models:
         data_type: timestamp
       - name: days_to_appointment
         description: "Days from lead creation to appointment booking."
-        data_type: integer
+        data_type: bigint
       - name: is_completed
         description: "True if appointment_status = completed."
         data_type: boolean
