@@ -2,8 +2,9 @@
 Dagster AssetChecks for row-count and schema validation on Gold marts.
 """
 
-import duckdb
 import os
+
+import duckdb
 
 from dagster import AssetCheckResult, AssetCheckSpec, asset_check
 

@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from serving.routers.client_context import router as context_router
+from serving.routers.client_context import router as context_router  # noqa: E402
 
 app = FastAPI(
     title="Beacon Lakehouse API",

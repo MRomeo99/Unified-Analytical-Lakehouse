@@ -15,7 +15,6 @@ from dagster import AssetExecutionContext, asset
 def raw_clients(context: AssetExecutionContext) -> None:
     """Ingest clients from Postgres operational database."""
     from ingestion.pipelines import run_postgres_pipeline
-    from ingestion.sources.postgres_source import postgres_source
 
     context.log.info("Starting Postgres ingestion pipeline...")
     pipeline = run_postgres_pipeline()

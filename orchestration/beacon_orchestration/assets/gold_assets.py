@@ -11,7 +11,6 @@ from orchestration.beacon_orchestration.assets.silver_assets import (
     stg_appointments,
     stg_clients,
     stg_leads,
-    stg_seo_rankings,
 )
 
 _GOLD_FRESHNESS = FreshnessPolicy(maximum_lag_minutes=26 * 60)
