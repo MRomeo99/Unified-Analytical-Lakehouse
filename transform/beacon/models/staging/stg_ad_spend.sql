@@ -26,7 +26,7 @@ typed as (
         cast(spend as decimal(10, 2))                       as spend,
         cast(impressions as integer)                        as impressions,
         cast(clicks as integer)                             as clicks,
-        current_timestamp                                   as _loaded_at
+        cast(current_timestamp as timestamp)                as _loaded_at
     from deduped
     where _row_num = 1
 )

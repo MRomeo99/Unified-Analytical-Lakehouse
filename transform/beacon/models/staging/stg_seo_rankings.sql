@@ -14,7 +14,7 @@ typed as (
         keyword,
         cast(position as integer)                            as position,
         cast(snapshot_date as date)                          as snapshot_date,
-        current_timestamp                                    as _loaded_at
+        cast(current_timestamp as timestamp)                 as _loaded_at
     from source
 )
 
