@@ -7,7 +7,7 @@ without any external infrastructure. For local development use
 """
 
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import duckdb
@@ -35,7 +35,7 @@ def main() -> None:
     duckdb_path = os.environ.get("DUCKDB_PATH", "./data/beacon.duckdb")
     Path(duckdb_path).parent.mkdir(parents=True, exist_ok=True)
 
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
 
     print(f"Populating DuckDB bronze tables in {duckdb_path} ...")
     conn = duckdb.connect(duckdb_path)
