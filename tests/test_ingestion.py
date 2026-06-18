@@ -3,12 +3,8 @@ Integration tests for seed generators and dlt ingestion pipelines.
 TDD: these tests were written before the implementations and define the contract.
 """
 
-import csv
-import json
 import sys
 from pathlib import Path
-
-import pytest
 
 # Ensure project root is importable
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -78,7 +74,7 @@ class TestGeneratePostgres:
 
         clients = generate_clients()
         leads = generate_leads(clients)
-        sources = {l["source"] for l in leads}
+        sources = {lead["source"] for lead in leads}
         assert sources.issubset({"organic", "paid", "referral", "social"})
 
     def test_lead_statuses_are_valid(self):
@@ -87,17 +83,17 @@ class TestGeneratePostgres:
 
         clients = generate_clients()
         leads = generate_leads(clients)
-        statuses = {l["status"] for l in leads}
+        statuses = {lead["status"] for lead in leads}
         assert statuses.issubset({"new", "contacted", "qualified", "converted", "lost"})
 
     def test_generate_appointments_returns_converted_leads_only(self):
         """Appointments must only exist for leads with status 'converted'."""
-        from seeds.generate_postgres import generate_clients, generate_leads, generate_appointments
+        from seeds.generate_postgres import generate_appointments, generate_clients, generate_leads
 
         clients = generate_clients()
         leads = generate_leads(clients)
         appointments = generate_appointments(leads)
-        converted_ids = {l["id"] for l in leads if l["status"] == "converted"}
+        converted_ids = {lead["id"] for lead in leads if lead["status"] == "converted"}
         for appt in appointments:
             assert appt["lead_id"] in converted_ids
 
@@ -184,7 +180,6 @@ class TestPipelineSchemas:
 
     def test_postgres_source_is_importable(self):
         """postgres_source module must export a dlt source."""
-        import dlt
         from ingestion.sources.postgres_source import postgres_source
 
         assert callable(postgres_source)

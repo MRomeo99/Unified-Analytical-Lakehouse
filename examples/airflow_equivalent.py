@@ -14,7 +14,6 @@ from datetime import datetime, timedelta
 try:
     from airflow import DAG
     from airflow.operators.bash import BashOperator
-    from airflow.operators.python import PythonOperator
 except ImportError:
     raise ImportError(
         "Install apache-airflow to use this DAG: pip install apache-airflow"

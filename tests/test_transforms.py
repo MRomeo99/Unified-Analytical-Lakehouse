@@ -6,7 +6,6 @@ Running `dbt compile` and `dbt test` is the "green" state.
 """
 
 import subprocess
-import sys
 from pathlib import Path
 
 import pytest

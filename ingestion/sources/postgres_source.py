@@ -4,8 +4,7 @@ dlt source for extracting clients, leads, and appointments from Postgres.
 Writes raw Delta Lake tables to MinIO (Bronze layer).
 """
 
-import os
-from typing import Iterator
+from collections.abc import Iterator
 
 import dlt
 from dlt.sources import DltResource
