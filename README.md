@@ -39,6 +39,8 @@ Postgres (clients/leads/appointments)
 Orchestrated by **Dagster** (Software-Defined Assets with FreshnessPolicies).
 Quality-gated by **Great Expectations** checkpoints.
 
+For the reasoning behind every major structural choice — medallion vs. alternatives, batch vs. streaming, star schema design, the serving layer as an AI agent interface, and more — see [**docs/design-decisions.md**](docs/design-decisions.md). Individual tool-level decisions (dlt vs. Fivetran, DuckDB vs. Snowflake, etc.) each have an ADR in [`docs/adr/`](docs/adr/).
+
 ---
 
 ## What this demonstrates
